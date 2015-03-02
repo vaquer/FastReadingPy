@@ -1,0 +1,178 @@
+<html>
+<head>
+    <title>Fast Reading</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript">
+        {% include "libs/require/require-min.js" %} 
+        {% include "libs/jquery/1.7.1/jquery.min.js" %}
+        {% include "libs/underscore/underscore-min.js" %}
+        {% include "libs/backbone/backbone-min.js" %}
+
+       !(function (root) {
+            root.console || (root.console = {});
+            typeof root.console.log !== 'function' && (root.console.log = function() {});
+            if (typeof Function.prototype.bind === 'undefined') {
+                Function.prototype.bind = function () {
+                    var fn = this, args = Array.prototype.slice.call(arguments), object = args.shift();
+                    return function () {
+                        return fn.apply(object,
+                            args.concat(Array.prototype.slice.call(arguments)));
+                    };
+                };
+            }
+            if (typeof root.addEventListener === 'undefined') {
+                root.addEventListener = function (type, listener, useCapture) {
+                    return root.attachEvent('on' + type, listener);
+                };
+            }
+            var require = root.require;
+            require.config({
+                baseUrl: '/static/js/',
+                urlArgs: + (+new Date),
+                paths: {
+                    'bootstrap': 'libs/bootstrap/bootstrap.min',
+                    // 'jquery': 'gallery/lib/jquery/jquery-1.11.1.min',
+                    // 'jquery.lockfixed': 'libs/jquery/jquery.lockfixed',
+                    // 'jquery-ui': 'gallery/lib/jquery/jquery-ui-1.11.2.custom/jquery-ui.min',
+                    // 'jquery.upload': 'gallery/lib/jquery/jquery.upload',
+                    // 'jquery.cookie' : 'libs/jquery/jquery.cookie',
+                    // 'jquery.bubblepopup': 'libs/jquery/jquery.bubblepopup',
+                    'jquery.ui.widget': 'libs/fileuploads/vendor/jquery.ui.widget',
+                    'jquery.iframe-transport': 'libs/fileuploads/jquery.iframe-transport',
+                    'jquery.fileupload': 'libs/fileuploads/jquery.fileupload',
+                    'jquery.cookie': 'libs/jquery/jquery.cookie',
+                },
+                // configure hgn! plugin
+                // hgn : {
+                //     // load "*.mustache" files, set to empty string if you
+                //     // want to specify the template extension for each individual file
+                //     // the default value is ".mustache"
+                //     templateExtension : '.mustache',
+                //     // if you need to set custom options it can be done through the
+                //     // "compilationOptions" setting, check hogan documentation:
+                //     // https://github.com/twitter/hogan.js#compilation-options
+                //     compilationOptions : {
+                //         // delimiters : '<% %>',
+                //         // sectionTags: [{o: '_foo', c: 'foo'}],
+                //         // disableLambda : true
+                //     }
+                // },
+                waitSeconds: 20,
+                shim: {
+                    bootstrap: {
+                        deps: ["jquery"]
+                    },
+                    datepicker: {
+                        deps: ["jquery"]
+                    },
+                    underscore: {
+                        exports: '_'
+                    },
+                    backbone: {
+                        deps: ["underscore", "jquery"],
+                        exports: "Backbone"
+                    }
+                }
+            });
+            
+            require(['jquery', 'underscore'], function ($, _) {
+                // define('usuario', function() {
+                //     return usuario;
+                // });
+                $.noConflict(), _.noConflict();
+                $(document).ready(function () {
+                    require(["apps/main"], function (App) {
+                        App.initialize();
+                    });
+                });
+            });
+
+            define('general_settings', function() {
+                return {'lowSpeed': 40, 'mediumSpeed': 80, 'highSpeed': 130, 'fontSize_': 30};
+            });
+        }(this));
+    </script>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/base.css">
+</head>
+<body>
+    <div class="site-wrapper">
+        <div class="site-wrapper-inner">
+            <div class="cover-container">
+                <div class="masthead clearfix">
+                    <div class="inner">
+                        <h3 class="masthead-brand">Fast Reading</h3>
+                        <nav>
+                           <ul class="nav masthead-nav">
+                              <li class="active homePage"><a href="#">Home</a></li>
+                              <li class="readPage"><a href="#">Lectura</a></li>
+                              <li class="configPage"><a href="#">Configuracion </a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="inner cover">
+                    <div class="welcome inner">
+                        <h1 class="cover-heading">Lectura Rapida.</h1>
+                        <p class="lead">Fast Reading, la aplicacion que te permitira leer tus documentos en formatos PDF, WORD y Texto Plano, bajo la tecnica de lecutra rapida. Comienza ahora!</p>
+                        <p class="lead">
+                            <div id="upload">
+                                <p>Por favor selecciona o arrastra el archivo que desees leer.</p>
+                                    <input id="fileupload" type="file" name="fileupload" data-url="/testeando/" multiple="" accept=".doc,.docx,.pdf,.txt">
+                            </div>
+                        </p>
+                    </div>
+                    <div class="config">
+                        <h2 class="cover-heading">Configuraci&oacute;n</h2>
+                        <form>
+                            <p>Velocidad de lectura (Palabras por minuto)</p>
+                            <div class="form-group">
+                                <label for="lowSpeed">Baja</label>
+                                <input type="text" class="form-control" class='lowSpeed' id="lowSpeed" placeholder="Ingresa la velocidad (Palabras x minuto)">
+                                <label for="mediumSpeed">Media</label>
+                                <input type="text" class="form-control" class='mediumSpeed'  id="mediumSpeed" placeholder="Ingresa la velocidad (Palabras x minuto)">
+                                <label for="highSpeed">Alta</label>
+                                <input type="text" class="form-control" class='highSpeed'  id="highSpeed" placeholder="Ingresa la velocidad (Palabras x minuto)">
+                            </div>
+                            <p>Tamaño de letra</p>
+                            <div class="form-group">
+                                <label for="fontSize">Tamaño</label>
+                                <input type="text" class="form-control" class='fontSize' id="fontSize" placeholder="Ingresa el tamaño de letra">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="reader">
+                        <h2 class="word">Primera</h2>
+                        <div class="controls">
+                            <div class="plays">
+                                <menu class="medium">
+                                    <button class="media rw"></button>
+                                    <button class="media play"></button>
+                                    <button class="media pause hide"></button>
+                                    <button class="media ff"></button>
+                                </menu>
+                            </div>
+                            <div class="speed">
+                                <button type="button" id="playSlow" class="btn btn-info">Lento</button>
+                                <button type="button" id="playMed" class="btn btn-success">Medio</button>
+                                <button type="button" id="playFast" class="btn btn-danger">Rapido</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loading">
+                        <h2 class="documento"></h2>
+                        <p class="lead size"></p>
+                        <p class="lead progresss"></p>
+                    </div>
+                </div>
+                <div class="mastfoot">
+                    <div class="inner">
+                        <p>Fast Reading, by <a href="https://github.com/vaquer">@Francisco</a>, <a href="https://www.facebook.com/rodilloo">@Adrian</a>, <a href="https://twitter.com/mdo">@Miguel</a></p>
+                    </div>
+                </div>
+        </div>     
+    </div>
+</body>
+</html>
