@@ -1,2 +1,4 @@
-UP/*
+*.doc
+*.docx
+UP/*.txt
 *.pyc
