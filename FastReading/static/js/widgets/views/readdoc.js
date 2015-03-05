@@ -23,12 +23,23 @@ define(['jquery', 'underscore', 'backbone', 'general_settings'], function ($, _,
             this.$el = $('.reader');
             this.speed = parseInt(60000 / this.configView.mediumSpeed);
             this.documentToRead = documentRead;
-            // this.documentToRead.texto = this.documentToRead.texto.replace('', ' ');
             this.documentToRead.texto = this.documentToRead.texto.split(' ');
         },
         render: function(configView){
             this.$el.find('.word').html(this.documentToRead.texto[0]);
+            this.upgradeRecently();
             this.showme(configView);
+        },
+        setDocument: function(setDocument){
+            this.documentToRead = setDocument;
+            this.documentToRead.texto = this.documentToRead.texto.split(' ');
+        },
+        upgradeRecently: function(){
+            var files = '';
+            for(i = 0; i < this.documentToRead.files_recently_open.length; i++){
+                files += '<li class="file_open" data-file="' + this.documentToRead.files_recently_open[i] + '">' + this.documentToRead.files_recently_open[i] + '</li>';
+            }
+            $('.recently ul').html(files)
         },
         playButton: function(){
             if(this.state === 0){

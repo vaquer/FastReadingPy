@@ -26,6 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+UPLOAD_FILES = os.path.join(BASE_DIR, 'UP')
 
 # Application definition
 

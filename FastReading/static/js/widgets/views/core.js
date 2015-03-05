@@ -8,6 +8,7 @@ define(['jquery', 'underscore', 'backbone', 'widgets/views/config', 'widgets/vie
             'click .homePage': 'showmeMenu',
             'click .readPage': 'showReader',
             'click .configPage': 'showConfig',
+            'click .file_open': 'showRecently'
         },
         initialize: function(){
             _.bindAll(this, '_showRead', '_changeProgress', '_manageFailUpload', '_loadState');
@@ -22,8 +23,13 @@ define(['jquery', 'underscore', 'backbone', 'widgets/views/config', 'widgets/vie
         },
         _loadState: function(file){
             this.$el.find('.welcome').hide();
-            this.$el.find('.loading .documento').html(file.name);
-            this.$el.find('.loading .size').html(file.size + 'Kb');
+            if(typeof file !== "string"){
+                this.$el.find('.loading .documento').html(file.name);
+                this.$el.find('.loading .size').html(file.size + 'Kb');
+            }else{
+                this.$el.find('.loading .documento').html(file);
+                this.$el.find('.loading .size').html('');
+            }
             this.$el.find('.loading .progresss').html('0%');
         },
         _manageFailUpload: function(){
@@ -32,6 +38,29 @@ define(['jquery', 'underscore', 'backbone', 'widgets/views/config', 'widgets/vie
         },
         _showRead: function(){
 
+        },
+        showRecently: function(event){
+            var self = this;
+            self.hideme();
+            self._loadState($(event.currentTarget).attr('data-file'));
+            $.post('/get-file', {
+                'file': $(event.currentTarget).attr('data-file')
+            }).done(function (data){
+                self.page = 2;
+                $('.homePage').removeClass('active');
+                $('.readPage').addClass('active');
+                self.$el.find('.loading .size').html(data.size + 'Kb');
+                self._changeProgress(100);
+                self.$el.find('.loading').show();
+                if(self.readView === null){
+                    self.readView = new readdoc(self.configView ,data);
+                }else {
+                    self.readView.setDocument(data);
+                }
+                self.readView.render(self.configView.getSettings());
+            }).fail(function (data){
+                self._manageFailUpload();
+            });
         },
         fileManager: function(){
             var self = this;
@@ -44,7 +73,11 @@ define(['jquery', 'underscore', 'backbone', 'widgets/views/config', 'widgets/vie
                     self.page = 2;
                     $('.homePage').removeClass('active');
                     $('.readPage').addClass('active');
-                    self.readView = new readdoc(self.configView ,data.result);
+                    if(self.readView === null){
+                        self.readView = new readdoc(self.configView ,data.result);
+                    }else {
+                        self.readView.setDocument(data.result);
+                    }
                     self.readView.render(self.configView.getSettings());
                 },
                 progressall: function(e, data){
@@ -65,6 +98,7 @@ define(['jquery', 'underscore', 'backbone', 'widgets/views/config', 'widgets/vie
                     this.readView.hideme();
                     $('.readPage').removeClass('active');
                     $('.homePage').addClass('active');
+                    this.$el.find('.loading').hide();
                     this.showme();
                 break;
                 case 3:
@@ -86,12 +120,14 @@ define(['jquery', 'underscore', 'backbone', 'widgets/views/config', 'widgets/vie
                         $('.homePage').removeClass('active');
                         $('.readPage').addClass('active');
                         this.readView.showme(this.configView.getSettings());
+                        this.$el.find('.loading').show();
                     break;
                     case 3:
                         this.configView.hideme();
                         $('.configPage').removeClass('active');
                         $('.readPage').addClass('active');
                         this.readView.showme(this.configView.getSettings());
+                        this.$el.find('.loading').show();
                     break;
                 }
                 this.page = 2;
@@ -119,9 +155,11 @@ define(['jquery', 'underscore', 'backbone', 'widgets/views/config', 'widgets/vie
         },
         showme: function(){
             this.$el.find('.welcome').show();
+            this.$el.find('.recently').show();
         },
         hideme: function(){
             this.$el.find('.welcome').hide();
+            this.$el.find('.recently').hide();
         }
     });
 });

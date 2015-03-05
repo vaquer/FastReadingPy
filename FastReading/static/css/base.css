@@ -513,3 +513,6 @@ The buttons mixin that defines the buttons styles, the @size must be defined to 
 Other Styles
 */
 .word {text-align: center;}
+
+.recently ul { margin-left: 42%; list-style: none; padding-left: 0; text-align: left;}
+li.file_open { cursor: pointer; list-style: none; margin: 0; padding: 0;}

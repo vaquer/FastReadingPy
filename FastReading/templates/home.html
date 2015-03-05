@@ -120,7 +120,7 @@
                         <p class="lead">
                             <div id="upload">
                                 <p>Por favor selecciona o arrastra el archivo que desees leer.</p>
-                                    <input id="fileupload" type="file" name="fileupload" data-url="/testeando/" multiple="" accept=".doc,.docx,.pdf,.txt">
+                                    <input id="fileupload" type="file" name="fileupload" data-url="/upload/" multiple="" accept=".doc,.docx,.pdf,.txt">
                             </div>
                         </p>
                     </div>
@@ -165,6 +165,14 @@
                         <h2 class="documento"></h2>
                         <p class="lead size"></p>
                         <p class="lead progresss"></p>
+                    </div>
+                    <div class="recently">
+                        <h2 class="documento">Documentos Recientes</h2>
+                        <ul>
+                            {% for file_open in files_recently_open  %}
+                                <li class="file_open" data-file="{{file_open}}">{{file_open}}</li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 </div>
                 <div class="mastfoot">
