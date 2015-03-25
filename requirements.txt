@@ -1,3 +1,4 @@
 Django==1.7.5
 lxml >= 2.3.2
 python-docx
+-e git+ssh://github.com/mfenniak/pyPdf.git#egg=pyPdf
